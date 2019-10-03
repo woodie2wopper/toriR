@@ -1,4 +1,4 @@
-# toriR（トリル）｜トリを聴き取る on R (listen and select birds voice on R;  (tori in Japanese is bird) )
+# toriR（トリル）｜トリを読み取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
 ## 概要（できること）
 - ICレコーダの録音データから変換されたスペクトログラムを`RStudio`上で表示します。
 - 見覚えのある声紋があればクリックし、メニューから種名を選択することで、スペクトログラムのファイル名の日時情報からクリックした場所に相当する時刻と選択した種名、クリックした周波数の情報をcsvファイルとして出力します。
@@ -52,3 +52,28 @@ window_time="60";     #Spectrogram time window｜スペクトログラムの時�
 width_image="624";    #Image width of Spectrogram
 windows_a_page="4";   #Spectrograms a page｜1頁のあたりのスペクトログラム
 ```
+
+## How to use `toriR`
+### Load source code 'toriR'
+1. Open `RStudio`
+2. Load 'toriR.R` code
+
+### Set and edit parameters in the `toriR` source code
+1. Set date parameter `date_analysis`: date_analysis <- 190501
+2. Set time parameter `time_analysis_sart` as a charactor: date_analysis <- "230000" 
+3. Edit candidates of bird's name of `spices` as a vector: spices <- c(
+  "play", "WAY｜save", "noise", "owl", "White's Thrush", "Japanese Green Pigeon"
+  );
+4. Edit if you want of play setting
+    - `volume` <- 8;# play volume
+    - `length_preplay` <- 1.; # length of playing time befor click 事前再生時間
+    - `length_play` <- 3;     # length of playing time after click 再生時間
+
+### Run `toriR`
+1. Run of all `toriR` source code
+2. Click bird's voice on the spectrogram image
+3. Select bird's name or play from list on console (move focus on console befor select list)
+4. When move to next page, click out of spectrogrum range (click white area of spectrogram) on Plots or press `ESC` key
+5. When skip the lest of pages, press `ESC` soon after click on plot
+
+
