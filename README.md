@@ -36,4 +36,24 @@ $tree -d
     ├── 190501
     └── ORG
 ```    
-ICレコーダの音源はORGというフォルダに入れてください。その親のフォルダに日にち毎のディレクトリが作られて、そこに音声ファイル(.wav)と、スペクトログラム(.png)、設定ファイル(.psgrm)ができます。()は拡張子です。
+- ICレコーダの音源はORGというフォルダに入れてください。その親のフォルダに日にち毎のディレクトリが作られて、そこに音声ファイル(.wav)と、スペクトログラム(.png)、設定ファイル(.psgrm)ができます。()は拡張子です。
+
+### スペクトログラム作成するための設定パラメータ
+```{bash}
+fftsize:
+f_lcf: 
+f_hcf: f
+windows_a_page="4"; Spectrograms a page｜1頁のあたりのスペクトログラム
+fftsize=1024; 	 Fast Fourie Transfer size (512 or 1024)｜FFTサイズ
+f_lcf=0000; 	Frequency of low cut filter｜周波数の加減
+f_hcf=12000;Frequency of high cut filter｜周波数の上限
+window_time="60"; Spectrogram time window｜スペクトログラムの時間幅
+width_image="624"; Image width of Spectrogram
+height_image="125"; Image height of Spectrogram
+ratio_clip="20"; Clipping ratio of sound spectrogram generated
+thrsd_clip_lo="-200"; Threshold of clipping value of low side of spectrogram gererated
+thrsd_clip_hi="-100"; Threshold of clipping value of high side of spectrogram gererated
+```
+mode_comp="clip";	f
+
+```
