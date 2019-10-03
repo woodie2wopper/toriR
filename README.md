@@ -1,4 +1,4 @@
-# toriR（トリル）｜トリを聴き取る on R (listen and select birds (tori in Japanese) voice on R)
+# toriR（トリル）｜トリを聴き取る on R (listen and select birds voice on R;  (tori in Japanese is bird) )
 ## 概要（できること）
 - ICレコーダの録音データから変換されたスペクトログラムを`RStudio`上で表示します。
 - 見覚えのある声紋があればクリックし、メニューから種名を選択することで、スペクトログラムのファイル名の日時情報からクリックした場所に相当する時刻と選択した種名、クリックした周波数の情報をcsvファイルとして出力します。
