@@ -27,7 +27,7 @@
 original filename: `DS700143.WMA`
 modified filename: `190501_230000-020000_DS700143.WMA`
 
-これを6_6-6形式とあるいは単純に666形式と読んでいます。
+これを6_6-6形式とあるいは単純に666形式と呼んでいます。
 ### ディレクトリの構成
 ```{bash}
 $tree -d
@@ -40,14 +40,15 @@ $tree -d
 
 ### スペクトログラム作成するための設定パラメータ
 ```{bash}
-fftsize=1024; 	 Fast Fourie Transfer size (512 or 1024)｜FFTサイズ
-f_lcf=0000; 	Frequency of low cut filter｜周波数の加減
-f_hcf=12000;Frequency of high cut filter｜周波数の上限
-height_image="125"; Image height of Spectrogram
-ratio_clip="20"; Clipping ratio of sound spectrogram generated
-thrsd_clip_lo="-200"; Threshold of clipping value of low side of spectrogram gererated
-thrsd_clip_hi="-100"; Threshold of clipping value of high side of spectrogram gererated
-window_time="60"; Spectrogram time window｜スペクトログラムの時間幅
-width_image="624"; Image width of Spectrogram
-windows_a_page="4"; Spectrograms a page｜1頁のあたりのスペクトログラム
+# value is default.
+fftsize=1024;#Fast Fourie Transfer size (512 or 1024)｜FFTサイズ
+f_lcf=0000;           #Frequency of low cut filter[Hz]｜周波数の加減
+f_hcf=12000;          #Frequency of high cut filter[Hz]｜周波数の上限
+height_image="125";   #Image height of Spectrogram
+ratio_clip="20";      #Clipping ratio of sound spectrogram generated
+thrsd_clip_lo="-200"; #Threshold of clipping value of low side of spectrogram gererated
+thrsd_clip_hi="-100"; #Threshold of clipping value of high side of spectrogram gererated
+window_time="60";     #Spectrogram time window｜スペクトログラムの時間幅
+width_image="624";    #Image width of Spectrogram
+windows_a_page="4";   #Spectrograms a page｜1頁のあたりのスペクトログラム
 ```
