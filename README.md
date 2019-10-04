@@ -1,8 +1,13 @@
 # toriR（トリル）｜トリを読み取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
-## 概要（できること）
+## 概要（できること）(What you can do.)
 - ICレコーダの録音データから変換されたスペクトログラムを`RStudio`上で表示します。
-- 見覚えのある声紋があればクリックし、メニューから種名を選択することで、スペクトログラムのファイル名の日時情報からクリックした場所に相当する時刻と選択した種名、クリックした周波数の情報をcsvファイルとして出力します。
-- 迷う場合はメニューから"再生"を選べば、音が再生できます（事前に`SoX`のインストールが必要）。
+- 見覚えのある声紋があればクリックし、メニューから種名を選択することで、日時と種名が`csv`ファイルに出力されます。
+- 迷う場合はメニューから"再生"を選べば、音が再生できます（`SoX`のインストールが必要）。
+- 再生の後にわかれば種名を選び、わからなければ不明種(WAY?: Who Are You?)としてクリック前後の数秒の音を保存できます。
+-The spectrogram converted from the recording data of the IC recorder is displayed on `RStudio`.
+-Click on a familiar voiceprint and select the species name from the menu. The date and species name will be output to the `csv` file.
+-If you are unsure, select "Play" from the menu to play the sound (`SoX` must be installed).
+-Select a species name if you know it after playback, and save a few seconds before and after clicking as an unknown species (WAY ?: Who Are You?).
 
 ## 対応OS
 1. MacOSX
