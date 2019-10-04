@@ -43,7 +43,26 @@ $tree -d
 ```    
 - ICレコーダの音源はORGというフォルダに入れてください。その親のフォルダに日にち毎のディレクトリが作られて、そこに音声ファイル(.wav)と、スペクトログラム(.png)、設定ファイル(.psgrm)ができます。()は拡張子です。
 
-### スペクトログラム作成するための設定パラメータ
+### Input and output files(入出力ファイル）
+`toriR` is based on processing for one hour. For example, if the recording is 1 hour from 23:00:00 on May 01, 2019, the following input files are required:
+（toriRは1時間分の処理を基本としており、例えば録音が2019年05月01日23:00:00から1時間の場合、次の入力ファイルが必要です）
+```{bash}
+Input files:
+190501_230000-000000.wav(sound:音声ファイル)
+190501_230000-000000.psgrm(parameter:パラメータファイル)
+190501_230000-000000_P05.png(spectrogrum for four minutes:4分のスペクトログラム)
+
+~
+190501_230000-000000_P15.png
+```
+Output file is `csv` file
+The output file of `toriR` is a `csv` file, and the output information is "date, time, species name and clickpoint frequency" obtained by clicking the spectrogram and selecting the bird list.
+(`toriR`の出力ファイルは`csv`ファイルで、クリックとリスト選択された結果が出力されます。それらの情報は、"日にち、時刻、種名とクリックした周波数"で、1行毎に出力されます。))
+```{bash}
+Output file: 190501_230000-000000.csv
+```
+
+### Parameters of spectrogum extraction(スペクトログラム作成するための設定パラメータ)
 ```{bash}
 # value is default.
 fftsize=1024;#Fast Fourie Transfer size (512 or 1024)｜FFTサイズ
@@ -80,12 +99,18 @@ spices <- c(
 ```
 
 ### Run `toriR`(トリルの実行)
-```{R}
-1. Run of all `toriR` source code(`toriR`の全てのソースコードを実行する)
-2. Click bird's voice on the spectrogram image(`toriR`のスペクトログラム画像上の鳥の声紋をクリック)
-3. Select bird's name or play from list after moving focus on console)(コンソール上にフォーカスし、リストから鳥の名前を選ぶ)
-4. When move to the next page, click the white area outside of the spectrogrum range on Plots or press `ESC` key(次のページに移動するにはPlots上のスペクトログラムの範囲外の白い部分をクリックするか`ESC`キーを押す)
-5. When skip the rest of pages, press `ESC` immediately after clicking on the plot(残りのページをスキップしたい場合は、プロット上をクリックした直後に`Esc`キーを押します)
-```
+
+1. Run of all `toriR` source code
+   (`toriR`の全てのソースコードを実行する)
+2. Click bird's voice on the spectrogram image
+   (`toriR`のスペクトログラム画像上の鳥の声紋をクリック)
+3. Select bird's name or play from list after moving focus on console)
+   (コンソール上にフォーカスし、リストから鳥の名前を選ぶ)
+4. When move to the next page, click the white area outside of the spectrogrum range on Plots or press `ESC` key
+   (次のページに移動するにはPlots上のスペクトログラムの範囲外の白い部分をクリックするか`ESC`キーを押す)
+5. When skip the rest of pages, press `ESC` immediately after clicking on the plot
+   (残りのページをスキップしたい場合は、プロット上をクリックした直後に`Esc`キーを押します)
 
 
+### Output file (出力ファイル)
+190501_230000-000000.csv
