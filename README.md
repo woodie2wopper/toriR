@@ -58,27 +58,34 @@ width_image="624";    #Image width of Spectrogram
 windows_a_page="4";   #Spectrograms a page｜1頁のあたりのスペクトログラム
 ```
 
-## How to use `toriR`; # `toriR`の使い方
-### Load source code 'toriR' ; # `toriR`コードを読む
+## How to use `toriR` (`toriR`の使い方)
+### Load source code 'toriR' (`toriR`コードを読む)
 1. Open `RStudio`;      # `RStudio`を開く
 2. Load 'toriR.R` code; # `toriR`コードを読み込む
 
-### Set and edit parameters in the `toriR` source code; # `toriR`のソースコード無いのパラメータを編集する
-1. Set date parameter `date_analysis`: date_analysis <- 190501;    # `date_analysis`を
-2. Set time parameter `time_analysis_sart` as a charactor: date_analysis <- "230000" 
-3. Edit candidates of bird's name of `spices` as a vector: spices <- c(
-  "play", "WAY｜save", "noise", "owl", "White's Thrush", "Japanese Green Pigeon"
-  );
-4. Edit if you want of play setting
-    - `volume` <- 8;# play volume
-    - `length_preplay` <- 1.; # length of playing time befor click 事前再生時間
-    - `length_play` <- 3;     # length of playing time after click 再生時間
+### Set and edit parameters in the `toriR` source code; (`toriR`のソースコード無いのパラメータを編集する)
+1. Set date parameter `date_analysis`: date_analysis <- 190501;(`date_analysis`を6桁の日にちを指定)
+2. Set time parameter `time_analysis_sart` as a charactor: (`time_analysis`を文字列として開始時刻を指定する)
+3. Edit candidates of bird's name of `spices` as a vector: (`spices`に鳥の声の種名を登録する。種名を""の中に入れる)
+```{R}
+spices <- c(
+"play", "WAY｜save", "noise", "owl", "White's Thrush", "Japanese Green Pigeon"
+);
+```
+4. Edit playing setting(option)(再生の設定(オプション))
+```{R}
+`volume` <- 8;# play volume;(再生音量の`volume`を設定)
+`length_preplay` <- 1.; # length of playing time befor click(クリックより前の再生時間)
+`length_play` <- 3;     # length of playing time after click(クリックの後の再生時間)
+```
 
-### Run `toriR`
-1. Run of all `toriR` source code
-2. Click bird's voice on the spectrogram image
-3. Select bird's name or play from list on console (move focus on console befor select list)
-4. When move to next page, click out of spectrogrum range (click white area of spectrogram) on Plots or press `ESC` key
-5. When skip the lest of pages, press `ESC` soon after click on plot
+### Run `toriR`(トリルの実行)
+```{R}
+1. Run of all `toriR` source code(`toriR`の全てのソースコードを実行する)
+2. Click bird's voice on the spectrogram image(`toriR`のスペクトログラム画像上の鳥の声紋をクリック)
+3. Select bird's name or play from list after moving focus on console)(コンソール上にフォーカスし、リストから鳥の名前を選ぶ)
+4. When move to the next page, click the white area outside of the spectrogrum range on Plots or press `ESC` key(次のページに移動するにはPlots上のスペクトログラムの範囲外の白い部分をクリックするか`ESC`キーを押す)
+5. When skip the rest of pages, press `ESC` immediately after clicking on the plot(残りのページをスキップしたい場合は、プロット上をクリックした直後に`Esc`キーを押します)
+```
 
 
