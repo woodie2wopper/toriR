@@ -4,6 +4,11 @@
 - 見覚えのある声紋があればクリックし、メニューから種名を選択することで、スペクトログラムのファイル名の日時情報からクリックした場所に相当する時刻と選択した種名、クリックした周波数の情報をcsvファイルとして出力します。
 - 迷う場合はメニューから"再生"を選べば、音が再生できます（事前に`SoX`のインストールが必要）。
 
+## 対応OS
+1. MacOSX
+2. Windows10
+3. 多分Linux系もOKでしょう
+
 ## 環境準備（下記をインストールし、pathに登録してください）
 1. `R`
 2. `RStudio`
@@ -53,13 +58,13 @@ width_image="624";    #Image width of Spectrogram
 windows_a_page="4";   #Spectrograms a page｜1頁のあたりのスペクトログラム
 ```
 
-## How to use `toriR`
-### Load source code 'toriR'
-1. Open `RStudio`
-2. Load 'toriR.R` code
+## How to use `toriR`; # `toriR`の使い方
+### Load source code 'toriR' ; # `toriR`コードを読む
+1. Open `RStudio`;      # `RStudio`を開く
+2. Load 'toriR.R` code; # `toriR`コードを読み込む
 
-### Set and edit parameters in the `toriR` source code
-1. Set date parameter `date_analysis`: date_analysis <- 190501
+### Set and edit parameters in the `toriR` source code; # `toriR`のソースコード無いのパラメータを編集する
+1. Set date parameter `date_analysis`: date_analysis <- 190501;    # `date_analysis`を
 2. Set time parameter `time_analysis_sart` as a charactor: date_analysis <- "230000" 
 3. Edit candidates of bird's name of `spices` as a vector: spices <- c(
   "play", "WAY｜save", "noise", "owl", "White's Thrush", "Japanese Green Pigeon"
