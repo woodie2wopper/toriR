@@ -1,4 +1,5 @@
 # toriR（トリル）｜トリを読み取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
+- エラーなどうまく動かない場合は、一番下のFAQをお読みください。
 ## 概要（できること）(What you can do.)
 - ICレコーダの録音データから変換されたスペクトログラムを`RStudio`上で表示します。
 - 見覚えのある声紋があればクリックし、メニューから種名を選択することで、日時と種名が`csv`ファイルに出力されます。
@@ -119,3 +120,8 @@ spices <- c(
 
 ### Output file (出力ファイル)
 190501_230000-000000.csv
+
+
+## FAQ
+1. [Q:Win]フォルダ名入力しCtrl+A→Ctrl+Enterを行ったところ文字化けしてエラーになってしまいました。
+    - RStudioでtoriRを読み込ませて文字化けする場合は`Reopen with encording`で`UTF-8`を選んで呼んでください。
