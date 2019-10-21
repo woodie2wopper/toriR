@@ -19,7 +19,6 @@ spices <- c(
 volume <- 8;         # play volume          ｜再生音量
 length_preplay <- 1.;# play time befor click｜クリック前の再生時間
 length_play    <- 4.;# play time after click｜クリック後の再生時間
-opt_overwrite_png <- TRUE
 
 ## ユーザ設定4｜ライブラリの読み込み（初回のみ） #############################
 # install.packages("png", dependencies = TRUE);
@@ -42,13 +41,13 @@ setwd(dir_dist)
 file_param      <- stringr::str_replace(path_wav, ".wav", ".psgrm")
 if( ! file.exists(file_param) ){
   stop(paste("No file:", file_param))
-  }else{
-    load(file = file_param)
-  };
+}else{
+  load(file = file_param)
+};
 
 ### output file csv) ####
 csvfile_output  <- stringr::str_replace(path_wav, ".wav", ".csv")
-if(file.exists(csvfile_output)) {cat("ファイルを上書きします:", csvfile_output)};
+if(file.exists(csvfile_output)) {cat("ファイルに追記します:", csvfile_output)};
 
 ### Recordint date and time ####
 file_info <- stringr::str_split(filebody_wav, "[_-]") %>% unlist;
@@ -130,7 +129,7 @@ for (num_page in 1:num_png){
   plot(NULL
        , xlim = c(0,1), ylim = c(0, 1)
        , xlab = "", ylab = "", yaxt = "n", xaxt = "n",xaxs = 'i', yaxs = 'i'
-       )
+  )
   rasterImage(images[[num_page]], 0, 0, 1, 1)
   for( i in 0:(windows_a_page-1)){
     rect( xl, yb - i * dy, xr, yt - i * dy, col="transparent", border = "red")
@@ -201,9 +200,12 @@ for (num_page in 1:num_png){
   }
 }
 
+
 ##画像に抽出結果を出力する ####
-if (opt_overwrite_png){
+answer <- menu(c("上書き", "終了"), title="\nR> 画像ファイルの処理")
+if (answer == 1){
   db <- db[-1,];
+  cat("画像ファイルに結果を出力します")
   for (num_page in 1:num_png){
     # for (num_page in 1:2){
     pngfile_input  <- pngs[num_page];
