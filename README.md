@@ -1,4 +1,4 @@
-# toriR（トリル）｜トリを読み取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
+# toriR（トリル）｜トリを聴き取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
 - エラーなどうまく動かない場合は、一番下のFAQをお読みください。
 ## 概要（できること）(What you can do.)
 - ICレコーダの録音データから変換されたスペクトログラムを`RStudio`上で表示します。
