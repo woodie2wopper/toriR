@@ -48,24 +48,11 @@ if( length(args) > 0) {
 }else{
   debug_flag=T; # debugモードの設定（コンソールで表示）
 
-  input_fft_file     <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/180420_051000-052000.fft"
-  input_fft_param    <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/180420_051000-052000.pfft"
-  output_spgrm_param <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/180420_051000-052000.psgrm"
-  output_image_body  <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/180420_051000-052000"
+  input_fft_file     <- "190501_233200-233600.fft"
+  input_fft_param    <- "190501_233200-233600.pfft"
+  output_spgrm_param <- "190501_233200-233600.psgrm"
+  output_image_body  <- "190501_233200-233600"
   
-  # input_fft_file <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR/190607_032842-042842_short.fft"
-  # input_fft_param <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR/190607_032842-042842_short.pfft"
-  # output_spgrm_param<- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR/190607_032842-042842_short.psgrm"
-
-  input_fft_file     <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190501_233200-233600.fft"
-  input_fft_param    <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190501_233200-233600.pfft"
-  output_spgrm_param <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190501_233200-233600.psgrm"
-  output_image_body  <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190501_233200-233600"
-  
-  input_fft_file     <- "/Volumes/Bird_Song-10TB/Y夜間自動録音/O1904-大峰城址/190427/190427_180000-190000.fft"
-  input_fft_param    <- "/Volumes/Bird_Song-10TB/Y夜間自動録音/O1904-大峰城址/190427/190427_180000-190000.pfft"
-    output_spgrm_param <- "/Volumes/Bird_Song-10TB/Y夜間自動録音/O1904-大峰城址/190427/190427_180000-190000.psgrm"
-    output_image_body  <- "/Volumes/Bird_Song-10TB/Y夜間自動録音/O1904-大峰城址/190427/190427_180000-190000"
   image_format <-"png"
   f_lcf <- 0; #  800 ; # Low Cut Filtterの周波数[Hz]
   f_hcf <- 12000; # 6000 ; # Low Cut Filtterの周波数[Hz]
