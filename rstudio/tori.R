@@ -24,6 +24,7 @@ library(tools)
 
 start <- function(path_wav){
 ## directory and files ##############
+dir_cur <- getwd()
 dir_dist <- dirname(path_wav)
 basename_wav <- basename(path_wav)
 dirname_wav  <- dirname(path_wav)
@@ -57,34 +58,12 @@ num_png <- length(pngs)
 ### time setting of toriR ######
 now <- Sys.time()
 txt_kikimimi <- c(
-  paste0("# プログラム:programname=", programname, "\n", 
+  paste0("# プログラム:programname=", programname, version, "\n", 
          "# 解析開始時間:StartTime_toriR=", now, "\n",
          format(time_start,"%Y.%m.%d,%H:%M:%S,R,,\n")
   )
 )
 cat(txt_kikimimi, file = csvfile_output, append = TRUE)
-
-# OSによる使い分け
-os <- strsplit(osVersion, " ")[[1]][1];
-str_play_trim <- function(os, volume, file_song, second_start=0, length_play=5){
-  if (os == "Windows" ) {
-    res <- sprintf("sox -V0 -v %d %s -t waveaudio trim %s %d", volume, file_song, second_start, length_play)
-  }
-  if (os == "macOS"){
-    res <- sprintf("play -V0 -v %d %s trim %s %d", volume, file_song, second_start, length_play)
-  }
-  return(res)
-}
-
-# str_play <- function(os, volume, file_song){
-#   if (os == "Windows" ) {
-#     res <- sprintf("sox -V0 -v %d %s -t waveaudio", volume, file_song)
-#   }
-#   if (os == "macOS"){
-#     res <- sprintf("play -V0 -v %d %s", volume, file_song)
-#   }
-#   return (res)
-# }
 
 ### windowの表示画面上の場所指定 ####
 if (windows_a_page == 4){
@@ -92,19 +71,11 @@ if (windows_a_page == 4){
   yb <- 0.805; yt <- 0.978;
   dy <- 0.25;
 }
-
-### 表示の設定####
-if (os == "macOS") {
-  par(family = "HiraKakuProN-W3")
-}
-if (os == "windows"){
-  windowsFonts(MEI = windowsFont("Meiryo"))
-  par(family = MEI)
-}
 images <- list(1:num_png)
 for (num_page in 1:num_png){
   images[[num_page]] <- readPNG(pngs[num_page])
 }
+
 ### toriRの結果データベース####
 db <- tribble(
   ~num_png, ~x, ~y, ~label,~col_text,
@@ -147,7 +118,8 @@ for (num_page in 1:num_png){
     time_offset <- (num_page - 1) * window_time * windows_a_page + window_time * y_position
     second_locator <- (time_offset + (x - xl) * (window_time)/(xr - xl)) 
     if(second_locator < 0)(length_preplay <- 0)
-    txt_play <- str_play_trim(os, volume, path_wav, second_locator - length_preplay, length_play)
+    str_play_trim <- "MUST BE REMOVED SOX/PLAY"
+    txt_play <- str_play_trim;  # (os, volume, path_wav, second_locator - length_preplay, length_play)
     time_locator   <- (time_offset + (x - xl) * (window_time)/(xr - xl) + time_start) %>% format("%Y.%m.%d,%H:%M:%S")
     freq_locator   <- (f_lcf + (y - (yb - y_position * dy)) * (f_hcf - f_lcf)/(yt - yb))
     
@@ -156,8 +128,6 @@ for (num_page in 1:num_png){
     while(spices[answer] == "再生") {#再生
       cat (txt_play);
       cat (paste0("# 再生:", txt_play, "\n"), file = csvfile_output, append = TRUE);
-      
-      system(txt_play);
       answer <- menu(spices, title="R> 種類を再選択してください");
       cat(paste0("Reselection = ", spices[answer],"\n"))
     }
@@ -219,4 +189,5 @@ if (answer == 1){
     dev.off()
   }
 }
+setwd(dir_cur)
 }
