@@ -38,10 +38,9 @@ if( length(args) > 0) {
   }else{
   debug_flag=T; # debugモードの設定（コンソールで表示）
   
-  # setwd("/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR")
-  inputfile <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR/190607_032842-042842_short.wav"
-  inputfile <- "/Users/osaka/Desktop/daybreak/R/test/test_fft2spectram.R/190606_No4_EVISTR/190607_032842-042842.wav"
-  inputfile <- "/Users/osaka/toriR\ Dropbox/Osaka\ Hideki/Public/toriR/sound_kagawa/160618/160618_060000-070000.wav"
+  inputfile <- "190607_032842-042842_short.wav"
+  inputfile <- "190607_032842-042842.wav"
+  inputfile <- "160618_060000-070000.wav"
   song_format <- "wav" ;
   image_format <-"pdf"
   fft_size <- 1024 ;# FFTするサイズの指定
@@ -75,7 +74,6 @@ if (! file.exists(inputfile)) {
   # q()
 }
 sound_file_body    <- basename(inputfile);
-
 
 ### ファイルの読み込み ####
 # inputfile <- paste(inputfile_body, song_format, sep=".")
@@ -197,19 +195,6 @@ print_stderr_system.time(
 )
   
 fft_set_mt <- t(fft_set_mt); # 互換性維持のために転置行列をかけて、行は周波数、列はtime_slotにする
-# cat(dim(fft_set_mt))
-# for (j in 1:slots_total){
-#     # message(paste("R> Process:j=", j));
-#     s1 <- (j - 1) * fft_size + 1; # 絶対データ番号に変換。j=1の時最初のデータのため1足しておく
-#     s2 <- s1    + fft_size - 1; # slotのサイズはfft_size。大きさはfft_sizeなので1引いておく
-#     
-#     fft_data <- fft(wav_data)[2:floor( fft_size / 2 + 1 )]; # 第1のデータはDCなので取っておく
-#     fft_abs  <- abs(fft_data); #[hcf][lcf] ; # フィルタをかける。上から削除するのが鉄則
-#     fft_set_mt[j, ] <- fft_abs; # 行列の生成。各rowにFFTの結果が入っている
-#     # property_mt[j,3:property_col_no] <-  c(j, property(fft_abs));# ここは少しトリッキー、#1,#2は録音日と録音開始時間
-#   }
-# )
-
 
 
 # write.table(property_df, sep = ",", quote = FALSE, row.name = FALSE, file = outputfile_peak);
