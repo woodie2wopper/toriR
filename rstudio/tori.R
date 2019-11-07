@@ -1,11 +1,6 @@
 # version########################################################
-programname <- "toriR0.83.R"; # 191006 HO 公開用にコードを整える
-
-## ユーザ設定1｜音源ファイル ##############################
-path_wav <- "/Users/osaka/Desktop/toriR_demo/test_山田彩子/190917/190917_030000-040000.wav";
-if( ! file.exists(path_wav) ) {stop(paste("No file:",path_wav))};
-# path_wavfile <- "C:/Users/〇〇/190501_230000-0000.wav"; # Windowsの書き方
-
+programname <- "tori.R"
+version <- "0.9.0"
 
 ## ユーザ設定2｜鳥の名前 ########################################
 spices <- c(
@@ -20,16 +15,14 @@ volume <- 8;         # play volume          ｜再生音量
 length_preplay <- 1.;# play time befor click｜クリック前の再生時間
 length_play    <- 4.;# play time after click｜クリック後の再生時間
 
-## ユーザ設定4｜ライブラリの読み込み（初回のみ） #############################
-# install.packages("png", dependencies = TRUE);
-#install.packages("dplyr", dependencies = TRUE);
-#install.packages("stringr", dependencies = TRUE);
 
 # R script from here ###########################################
 library(png)
 library(dplyr)
 library(stringr)
 library(tools)
+
+start <- function(path_wav){
 ## directory and files ##############
 dir_dist <- dirname(path_wav)
 basename_wav <- basename(path_wav)
@@ -225,4 +218,5 @@ if (answer == 1){
     }
     dev.off()
   }
+}
 }

@@ -1,0 +1,10 @@
+services:
+  torir-studio:
+    build:
+      context: ./rstudio
+    environment:
+      DISABLE_AUTH: "true"
+    ports:
+    - 127.0.0.1:8787:8787
+    # command: ["/home/rstudio/tori.R"]
+version: "3.2"

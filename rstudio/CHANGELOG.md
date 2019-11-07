@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 japanse https://www.softantenna.com/wp/software/keep-a-changeloag/
 
+## [0.9.0] - 2019-11-xx
+docker + Rstudio server for localhost 化
+http://localhost:8787 without auth
+
 ## [0.83] - 2019-10-06
 HO 公開用にコードを整える
 機能1：666形式のスペクトログラムを表示し、クリックしてリストから選択すると日にち,時刻,種名,周波数が出力される
