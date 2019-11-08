@@ -1,3 +1,7 @@
+# Select or linsten bird's voice on R
+# @author woodiw2wopper <woodie2wopper@gmail.com>,
+#         marltake <otake.shigenori@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 # version########################################################
 programname <- "tori.R"
 version <- "0.9.0"
