@@ -1,3 +1,6 @@
+# make Spectrogram from FFT
+# @author woodiw2wopper <woodie2wopper@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 # ############ FFTからSpectrogramを出力するプログラム
 # [R1.1] 190721 HO クリッピングの設定
 # [R1.0] 190630 HO imagep()のカラーの指定

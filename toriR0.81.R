@@ -1,3 +1,6 @@
+# Select or linsten bird's voice on R
+# @author woodiw2wopper <woodie2wopper@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 ## ユーザ設定1｜日程と時刻の設定 ##############################
 date_analysis      <- 190501
 time_analysis_sart <- "040000";#文字列です。""で囲ってください

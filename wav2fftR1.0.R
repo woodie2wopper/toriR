@@ -1,3 +1,6 @@
+# FFT of monoralized wav file
+# @author woodiw2wopper <woodie2wopper@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 # ############ wavファイルをモノラル化してFFT（絶対値）を出力する28
 # [R0.9] 190626 HO データがおかしいので直す
 # [R0.8] 190623 HO ディレクトリの関係を整理する。入出力も全てのファイルはBASHで面倒を見る。
