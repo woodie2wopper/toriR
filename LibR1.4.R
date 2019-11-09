@@ -1,3 +1,6 @@
+# support functions
+# @author woodiw2wopper <woodie2wopper@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 # R 用の自作関数の定義
 # R1.3: 181013 HO: multiplot()を追加。
 # R1.2: 180929 HO: トラツグミの声の分析関係を追加する

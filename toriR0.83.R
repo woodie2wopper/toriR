@@ -1,3 +1,6 @@
+# Select or linsten bird's voice on R
+# @author woodiw2wopper <woodie2wopper@gmail.com>
+# Copyright (C) 2019 woodiw2wopper
 # version########################################################
 programname <- "toriR0.83.R"; # 191006 HO 公開用にコードを整える
 

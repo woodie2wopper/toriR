@@ -1,3 +1,8 @@
+<!--
+Select or linsten bird's voice on R
+@author woodiw2wopper <woodie2wopper@gmail.com>
+Copyright (C) 2019 woodiw2wopper
+-->
 # toriR（トリル）｜トリを聴き取る on R (Select or linsten bird's voice on R;  (tori in Japanese is bird) )
 - エラーなどうまく動かない場合は、一番下のFAQをお読みください。
 ## 概要（できること）(What you can do.)
