@@ -25,6 +25,10 @@ library(png)
 library(dplyr)
 library(stringr)
 library(tools)
+library(htmltools)
+library(tuneR)
+
+setwd("/home/rstudio/data")
 
 start <- function(path_wav){
 ## directory and files ##############
@@ -194,4 +198,19 @@ if (answer == 1){
   }
 }
 setwd(dir_cur)
+}
+
+save_and_play <- function(wavedata, basename, start, period) {
+    stop = start + period
+    # wavefile = paste(basename, "_", as.character(start), "-", as.character(stop), ".wav", sep="")
+    wavefile = sprintf("%s_%04d-%04d.wav", basename, start, stop)
+    start = wavedata@samp.rate * start + 1
+    stop = wavedata@samp.rate * stop
+    tuneR::writeWave(wavedata[start:stop], filename = wavefile)
+    wave_url = paste("http://localhost:8000/", wavefile, sep = "")
+    audio = tags$audio(
+    controls="", autoplay="", name="media", 
+    tags$source(src=wave_url, type="audio/x-wav")
+    )
+  htmltools::html_print(audio)
 }

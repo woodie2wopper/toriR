@@ -5,6 +5,7 @@ RUN apt-get update && \
 RUN r -e 'install.packages("png", dependencies = TRUE)' && \
     r -e 'install.packages("dplyr", dependencies = TRUE)' && \
     r -e 'install.packages("stringr", dependencies = TRUE)'
+RUN r -e 'install.packages("tuneR", dependencies = TRUE)'
 ENV TORIR_HOME=/home/rstudio
 WORKDIR $TORIR_HOME
 RUN mkdir data
