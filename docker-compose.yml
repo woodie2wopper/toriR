@@ -2,10 +2,18 @@ services:
   torir-studio:
     build:
       context: ./rstudio
+    image: marltake/torir-studio
     environment:
       DISABLE_AUTH: "true"
     ports:
     - 127.0.0.1:8787:8787
     volumes:
     - ./data:/home/rstudio/data
+  web-data:
+    image: python:slim
+    volumes:
+    - ./data:/data
+    ports:
+    - 127.0.0.1:8000:8000
+    command: ["python", "-m", "http.server", "8000", "-d", "/data"]  # , "--bind", "127.0.0.1
 version: "3.2"
