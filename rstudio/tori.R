@@ -30,40 +30,25 @@ library(tuneR)
 
 setwd("/home/rstudio/data")
 
-start <- function(path_wav){
-  ## directory and files ##############
-  dir_cur <- getwd()
-  dir_dist <- dirname(path_wav)
-  basename_wav <- basename(path_wav)
-  dirname_wav  <- dirname(path_wav)
-  filebody_wav <- tools::file_path_sans_ext(basename_wav)
-  setwd(dir_dist)
-
-  ### parameter file laod ####
-  file_param      <- stringr::str_replace(path_wav, ".wav", ".psgrm")
-  if( ! file.exists(file_param) ){
-    stop(paste("No file:", file_param))
-  }else{
-    load(file = file_param)
-  };
-
-  ### output file csv) ####
-  csvfile_output  <- stringr::str_replace(path_wav, ".wav", ".csv")
-  if(file.exists(csvfile_output)) {cat("ファイルに追記します:", csvfile_output)};
+start <- function(path_of_wav) {
+  ret <- check_and_goto_target_dir(path_of_wav);
+  dir_to_return <- ret$return_dir;
+  add_to_base <- ret$add_to_base;
 
   ### Recordint date and time ####
-  file_info <- stringr::str_split(filebody_wav, "[_-]") %>% unlist;
-  date_record <- file_info[1]; # 録音日
-  time_start  <- paste(date_record, file_info[2], sep =" ")
-  time_start  <- strptime(time_start, format="%y%m%d %H%M%S"); 
-  time_end    <- paste(date_record, file_info[3], sep = " "); # 録音終了時間
-  time_end    <- strptime( time_end, format="%y%m%d %H%M%S"); # 録音開始時刻
+  ret <- parse_666filename(path_of_wav);
+  time_start <- ret$start;
+  time_end <- ret$end;
 
   ### png file setting ######
-  pngs <- list.files(pattern = paste0(filebody_wav, "_P[0-9][0-9].png"))
+  pngs = list.files(pattern = add_to_base("_P[0-9][0-9].png"));
   num_png <- length(pngs)
 
+  # load wave file
+  wave_data = tuneR::readWave(add_to_base(".wav"));
+
   ### time setting of toriR ######
+  csvfile_output <- add_to_base(".csv");
   now <- Sys.time()
   txt_kikimimi <- c(
     paste0("# プログラム:programname=", programname, version, "\n", 
@@ -126,16 +111,17 @@ start <- function(path_wav){
       time_offset <- (num_page - 1) * window_time * windows_a_page + window_time * y_position
       second_locator <- (time_offset + (x - xl) * (window_time)/(xr - xl)) 
       if(second_locator < 0)(length_preplay <- 0)
-      str_play_trim <- "MUST BE REMOVED SOX/PLAY"
-      txt_play <- str_play_trim;  # (os, volume, path_wav, second_locator - length_preplay, length_play)
       time_locator   <- (time_offset + (x - xl) * (window_time)/(xr - xl) + time_start) %>% format("%Y.%m.%d,%H:%M:%S")
       freq_locator   <- (f_lcf + (y - (yb - y_position * dy)) * (f_hcf - f_lcf)/(yt - yb))
       
       answer <- menu(spices, title="\nR> 種類を選択してください:")
       # cat(paste0("Select:", spices[answer]))
       while(spices[answer] == "再生") {#再生
-        cat (txt_play);
-        cat (paste0("# 再生:", txt_play, "\n"), file = csvfile_output, append = TRUE);
+        start_play = second_locator - length_preplay;
+        period = length_preplay + length_play;
+        cat ("play", start_play, "to", start_play + period);
+        cat (paste0("# 再生: ", start_play, " to ", start_play + period, "\n"), file = csvfile_output, append = TRUE);
+        save_and_play(wave_data, add_to_base(), start_play, period);
         answer <- menu(spices, title="R> 種類を再選択してください");
         cat(paste0("Reselection = ", spices[answer],"\n"))
       }
@@ -197,20 +183,66 @@ start <- function(path_wav){
       dev.off()
     }
   }
-  setwd(dir_cur)
+  setwd(dir_to_return)
 }
 
-save_and_play <- function(wavedata, basename, start, period) {
-  stop = start + period
-  # wavefile = paste(basename, "_", as.character(start), "-", as.character(stop), ".wav", sep="")
-  wavefile = sprintf("%s_%04d-%04d.wav", basename, start, stop)
-  start = wavedata@samp.rate * start + 1
-  stop = wavedata@samp.rate * stop
-  tuneR::writeWave(wavedata[start:stop], filename = wavefile)
-  wave_url = paste("http://localhost:8000/", wavefile, sep = "")
+config_add_to_base <- function(base_filename) {
+  function(toadd="") {
+    paste0(base_filename, toadd);
+  };
+}
+
+check_and_goto_target_dir <- function(path_of_wav) {
+  return_dir <- getwd();
+  setwd(dirname(path_of_wav));
+  add_to_base <- config_add_to_base(stringr::str_replace(basename(path_of_wav), ".wav", ""));
+  ### parameter file laod ####
+  file_param = add_to_base(".psgrm")
+  if( ! file.exists(file_param) ){
+    setwd(return_dir);
+    stop(paste("No file:", file_param))
+  }else{
+    load(file = file_param, envir=parent.frame(n=2));
+  };
+  ### output file csv) ####
+  csvfile_output = add_to_base(".csv");
+  if(file.exists(csvfile_output)) {cat("ファイルに追記します: ", csvfile_output,"\n", sep="")};
+  return(list(return_dir=return_dir, add_to_base=add_to_base));
+}
+
+parse_666filename <- function(path_wave) {
+  info666 = stringr::str_split(basename(path_wave), "[._-]") %>% unlist;
+  start = strptime(paste(info666[1], info666[2]), format="%y%m%d %H%M%S"); 
+  end = strptime(paste(info666[1], info666[3]), format="%y%m%d %H%M%S"); 
+  return(list(start=start, end=end))
+}
+
+find_pngs <- function(path_base) {
+  path_dir = dirname(path_base);
+  pngs = list.files(path = normalizePath(path_dir),
+                    pattern = paste0(basename(path_base), "_P[0-9][0-9].png"));
+  for (i in 1:length(pngs)) {
+    pngs[[i]] = paste(path_dir, pngs[[i]], sep = "/")
+  }
+  return(pngs)
+}
+
+save_and_play <- function(wave_data, base_name, start, period) {
+  start = as.integer(start);
+  stop = as.integer(start + period);
+  wave_file = sprintf("%s_%04d-%04d.wav", base_name, start, stop)
+  if( ! file.exists(wave_file) ){
+    start_frame = wave_data@samp.rate * start + 1
+    stop_frame = wave_data@samp.rate * stop
+    tuneR::writeWave(wave_data[start_frame:stop_frame], filename = wave_file)
+  }
+  # TODO how to get route to wd
+  REL_PATH <- stringr::str_replace(getwd(), "/home/rstudio/data/", "");
+  # relpath getwd() from /home/rstudio/data ?
+  wave_URL = sprintf("http://localhost:8000/%s/%s", REL_PATH, wave_file)
   audio = tags$audio(
   controls="", autoplay="", name="media", 
-  tags$source(src=wave_url, type="audio/x-wav")
+  tags$source(src=wave_URL, type="audio/x-wav")
   )
   htmltools::html_print(audio)
 }
