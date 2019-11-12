@@ -27,6 +27,9 @@ library(stringr)
 library(tools)
 library(htmltools)
 library(tuneR)
+library(extrafont)
+font_import(prompt = FALSE)
+par(family="IPAMincho")
 
 setwd("/home/rstudio/data")
 
