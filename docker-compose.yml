@@ -10,7 +10,7 @@ services:
     volumes:
     - ./data:/home/rstudio/data
   web-data:
-    image: python:slim
+    image: python:3.7-alpine
     volumes:
     - ./data:/data
     ports:
