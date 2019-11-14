@@ -27,7 +27,6 @@ library(stringr)
 library(tools)
 library(htmltools)
 library(tuneR)
-library(extrafont)
 
 toriRstart <- function(path_of_wav) {
   ret <- check_and_goto_target_dir(path_of_wav);
@@ -244,9 +243,4 @@ save_and_play <- function(wave_data, base_name, start, period) {
   tags$source(src=wave_URL, type="audio/x-wav")
   )
   htmltools::html_print(audio)
-}
-
-config_font <- function() {
-  graphics::par(family="IPAMincho");
-  font_import(paths = "/usr/share/fonts/opentype/ipaexfont-mincho", prompt = FALSE);
 }
