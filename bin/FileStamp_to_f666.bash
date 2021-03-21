@@ -9,8 +9,12 @@ CMD_SESSION=$( basename $0 )
 d_log=$HOME/log
 [ -d $d_log ] || mkdir $d_log
 f_log="$d_log/$CMD_SESSION.$(date '+%y%m%d_%H%M%S').$$.clog"
+
 exec 2> $f_log
 set -xveu
+
+diffstd=60 ; # ファイルの時間とファイル名の時間のとの差である基準時間
+
 #
 # 66形式からエポック秒を得る
 function _66_to_epoch() {
@@ -45,14 +49,8 @@ u[i++]=" OPT : [show_maker] メーカ情報を表示します"
 
 prompt="${CMD_SESSION}> "
 
-_date=$( date +%y%m%d );
-_time=$( date "+%H%M%S" );
-_date_time="${_date} ${_time}"
-
 inputfile=${1}; 
 [ -f ${inputfile} ] ||  abort "ファイル(${inputfile})がありません。終了します。" 
-
-diffstd=60 ; # ファイルの時間とファイル名の時間のとの差である基準時間
 
 # オプションの取得
 [ $# -ge 2 ] && ifs=${2}  			||	ifs=""
@@ -62,7 +60,7 @@ diffstd=60 ; # ファイルの時間とファイル名の時間のとの差で�
 
 [[ $timediff =~ ^[+-][0-9]{6}$ ]]	|| abort "ERROR: timediff=${timediff}は+/-付きの6桁の数字で入力してください"
 sign_timediff="${timediff:0:1}"
-second_timediff=$( bc <<< ${timediff:1:2}*3600+${timediff:3:2}*60+${timediff:5:2})
+second_timediff=$( echo ${timediff:1:2}*3600+${timediff:3:2}*60+${timediff:5:2} | bc )
 
 # ファイル関係の設定
 dirname=$( dirname ${inputfile} )	
@@ -75,20 +73,19 @@ ext=${basename##*.} 		# exit # 拡張子を取り出す
 fulldirname=$( echo ${fulldirname} | sed -e 's#//*#/#' ) ; # 複数の///を一つにする
 devicename=$( echo ${fulldirname} | awk '{split($0,a,"/"); print a[3]}' ) # 2つ目のディレクトリ名がデバイス名
 
-# ログファイルの設定
-dir_wav2aiff="${HOME}/.wav2aiff"
-logfile="${dir_wav2aiff}/ICR2Kikimimi_$( gdate +%y%m%d-%H%M%S ).$$.log"; 
-[ -e ${dir_wav2aiff} ] || mkdir ${dir_wav2aiff}
-[ -e ${logfile} ]      || touch ${logfile}
-echo -n ${logfile} | pbcopy
+# # ログファイルの設定
+# dir_wav2aiff="${HOME}/.wav2aiff"
+# logfile="${dir_wav2aiff}/ICR2Kikimimi_$( gdate +%y%m%d-%H%M%S ).$$.log"; 
+# [ -e ${dir_wav2aiff} ] || mkdir ${dir_wav2aiff}
+# [ -e ${logfile} ]      || touch ${logfile}
+# echo -n ${logfile} | pbcopy
 
 # 時間関係の設定
-filedate=$(  		gls  -l --time-style=+%y%m%d ${inputfile} |awk '{print $6}' );
-filestamp=$( 		gls  -l --time-style=+%H%M%S ${inputfile} |awk '{print $6}' );
-epoch_filestamp=$( 	gls  -l --time-style="+%Y-%m-%d %H:%M:%S" ${inputfile} |awk '{print $6, $7}'| xargs -I{} gdate -d {} +%s );
-epoch_filestamp=$( 	date -r ${inputfile} '+%s' );
+filedate=$(  				date -r ${inputfile} '+%y%m%d' 	);
+filestamp=$( 				date -r ${inputfile} '+%H%M%S' 	);
+epoch_filestamp=$( 	date -r ${inputfile} '+%s' 			);
 
-_duration=$( soxi -d ${inputfile}) 
+_duration=$( soxi -d ${inputfile} ) 
 epoch_duration=$( echo  ${_duration:0:2}*3600+${_duration:3:2}*60+${_duration:6} | bc )
 
 ## ファイル名からメーカと機種(item)の決定 ###
@@ -266,11 +263,11 @@ if [ -z $namestart ] && [ -z $namestop ]; then
 fi
 if [ -z ${namestart} ] && [ ! -z $namestop ]; then 
 	epoch_namestop=$( _66_to_epoch $namedate $namestop )
-	epoch_namestart=$(bc <<< "$epoch_namestop - $epoch_duration" )
+	epoch_namestart=$( echo "$epoch_namestop - $epoch_duration" | bc )
 fi
 if [ ! -z $namestart ] && [ -z ${namestop} ]; then
 	epoch_namestart=$( _66_to_epoch $namedate $namestart )
-	epoch_namestop=$(bc <<< "$epoch_namestart + $epoch_duration" )
+	epoch_namestop=$( echo "$epoch_namestart + $epoch_duration" | bc )
 fi
 if [ ! -z $namestart ] && [ ! -z $namestop ]; then
 	epoch_namestart=$( _66_to_epoch $namedate $namestart	)
@@ -281,17 +278,17 @@ fi
 # 開始と終了によりファイルスタンプから名前を得る
 if [[ ${filewhich} = "開始" ]]; then 
 	epoch_start=$epoch_filestamp
-	epoch_stop=$(bc <<< "$epoch_start + $epoch_duration" )
-	[ ! $ifs = "-" ]	&& diff=$( bc <<< "$epoch_start - $epoch_namestart");
+	epoch_stop=$( echo "$epoch_start + $epoch_duration" | bc )
+	[ ! $ifs = "-" ]	&& diff=$( echo "$epoch_start - $epoch_namestart" | bc );
 else
 	epoch_stop=$epoch_filestamp
-	epoch_start=$(bc <<< "$epoch_stop - $epoch_duration" )
-	[ ! $ifs = "-" ] 	&& diff=$(  bc <<< "$epoch_stop - $epoch_namestop");
+	epoch_start=$( echo "$epoch_stop - $epoch_duration" | bc )
+	[ ! $ifs = "-" ] 	&& diff=$(  echo "$epoch_stop - $epoch_namestop" | bc );
 fi
 
 #
 # ファイルスタンプと名前の時刻との整合性を確認する
-[ ! $ifs = "-" ] && diff=$( bc <<< "sqrt( ( $(printf "%.0f" $diff ) )^2 )" )	|| diff=0
+[ ! $ifs = "-" ] && diff=$( echo "sqrt( ( $(printf "%.0f" $diff ) )^2 )" | bc )	|| diff=0
 
 #  ifsの処理と時間差の計算===========
 
@@ -299,14 +296,14 @@ fi
 case $ifs in
 	"ifs" )
 	# ファイル名から時刻を生成
-	epoch_start=$(bc <<< "$epoch_namestart $sign_timediff $second_timediff" )
-	epoch_stop=$( bc <<< "$epoch_namestop  $sign_timediff $second_timediff" )
+	epoch_start=$( echo "$epoch_namestart $sign_timediff $second_timediff"  | bc )
+	epoch_stop=$(  echo "$epoch_namestop  $sign_timediff $second_timediff"  | bc )
 	;;
 
 	"ifn" )
 	# ファイルのタイムスタンプで計算する
-	epoch_start=$(bc <<< "$epoch_start $sign_timediff $second_timediff" )
-	epoch_stop=$( bc <<< "$epoch_stop  $sign_timediff $second_timediff" )
+	epoch_start=$( echo "$epoch_start $sign_timediff $second_timediff"  | bc )
+	epoch_stop=$(  echo "$epoch_stop  $sign_timediff $second_timediff"  | bc )
 	;;
 
 	* )
@@ -336,34 +333,4 @@ outputfile="${n__}_${_n_}-${__n}_${item}${separator}${filebody}.$ext"
 [[ "$show_maker" 	= show_maker 	]] && echo -n "$maker" "$item "
 
 echo "$outputfile"  
-
-# ######## バードリストやその他設定
-birdlist="bird.list.20${namedate:0:2}.${namedate:2:2}.${namedate:4:2}.csv"
-rate=$( soxi ${inputfile}  | grep "Sample Rate" 	| awk 'BEGIN{FS=": "}{print $2}')
-depth=$(soxi ${inputfile}  | grep Precision 		| awk 'BEGIN{FS=": "}{print $2}')
-depth=${depth:0:2} ; # 頭の2文字だけ取り出す
-codec="pcm_s${depth}be"; 
-
-######### 　表示　############################################    
-echo "#${CMD_SESSION}> ************************************************"                  1>&2
-echo "#${CMD_SESSION}> 処理日                      :now=$( date '+%Y-%m-%d %H:%M:%S')"    1>&2
-echo "#${CMD_SESSION}> 入力ファイル名              :inputfile=${inputfile}"               1>&2
-echo "#${CMD_SESSION}> 入力ファイルのディレクトリ名:fulldirname=${fulldirname}"           1>&2
-echo "#${CMD_SESSION}> 出力ファイル名              :outputfile=${outputfile}"             1>&2
-echo "#${CMD_SESSION}> メーカ                      :maker=${maker}"                       1>&2
-echo "#${CMD_SESSION}> item                        :item=${item}"                         1>&2
-echo "#${CMD_SESSION}> 機種                        :logo=${logo}"                         1>&2
-echo "#${CMD_SESSION}> ファイル名日付              :namedate=${namedate}"                 1>&2
-echo "#${CMD_SESSION}> ファイル名にある録音開始時間:namestart=${namestart}"               1>&2
-echo "#${CMD_SESSION}> ファイル名にある録音終了時間:namestop=${namestop}"                 1>&2
-echo "#${CMD_SESSION}> タイムスタンプ(日付)        :filedate=${filedate}"                 1>&2
-echo "#${CMD_SESSION}> タイムスタンプ(時間)        :filestamp=${filestamp}"               1>&2
-echo "#${CMD_SESSION}> タイムスタンプ(開始｜終了)  :filewhich=${filewhich}"               1>&2
-echo "#${CMD_SESSION}> 曲の長さの時間              :duration=${_duration}"                1>&2
-echo "#${CMD_SESSION}> 指定の時間差                :timediff=${timediff}"                 1>&2
-echo "#${CMD_SESSION}> バードリスト                :birdlist=${birdlist}"                 1>&2
-echo "#${CMD_SESSION}> サンプリングレート          :Sampling_Rate=${rate}"                1>&2
-echo "#${CMD_SESSION}> サンプリングデプス          :Sampling_Depth=${depth}"              1>&2
-echo "#${CMD_SESSION}> コーデック                  :codec=${codec}"                       1>&2
-
 exit 0;
