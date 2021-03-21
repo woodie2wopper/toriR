@@ -1,0 +1,158 @@
+#!/usr/local/bin/bash -eu
+# wav2aiff.bash; 
+# 2020-05-30 (C) woodie2wopper@gmail.com
+CMD_SESSION=$( basename $0 )
+
+debug=":"
+#debug="echo "
+
+d_log=$HOME/log
+[ -d $d_log ] || mkdir $d_log
+f_log="$d_log/$CMD_SESSION.$(date '+%y%m%d_%H%M%S').$$.clog"
+exec 2> $f_log
+programname=$( basename $0 );
+set -xuev
+i=0;
+
+u[i++]=" "
+u[i++]=" ICR2Kikimimi.bashのラッパー"
+u[i++]=" USAGE:\$ $programname XX.WAV [~/Desktop|dir_output] [ifs|ifn] [-010000] [dryrun]"
+u[i++]=" "
+u[i++]=" OPTION 1: [timediff] 時差 : %H%M%Sで入力の事"
+u[i++]=" OPTION 2: [ifs]はファイルのタイムスタンプを無視する(Ignore File Stamp)"
+u[i++]=" OPTION 3: [ifn]はファイル名のタイムを無視する(Ignore File Name)"
+u[i++]=" OPTION 4: [omsg]はメッセージの出力"
+u[i++]=" USAGE[Xacti1]:\$ cd /Volumes/XACTI/MIC_A_SD/  		; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" USAGE[Xacti2]:\$ cd /Volumes/MSD-16GB/MIC_A_SD/		; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" USAGE[Pana  ]:\$ cd /Volumes/ICR-16G/MIC_A_SD/		; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" USAGE[Sony  ]:\$ cd /Volumes/MS-8GB/MSSONY/HIFI/FOLDER01	; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" USAGE[Zoom  ]:\$ cd /Volumes/H6_SD/FOLDER01             ; find . -name \"*.WAV\" -exec ${programname} {} \;"
+u[i++]=" USAGE[DM-750]:\$ cd /Volumes/MSD-08GB/RECORDER/FOLDER_A ; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" USAGE[LS-7  ]:\$ cd /Volumes/LS-32GB/RECORDER/FOLDER_A/    ; l *.WAV |xargs -n1 ${programname}"
+u[i++]=" 機能:"
+u[i++]="  1. WAVの音声をAIFFに変換します。"
+u[i++]="  2. MP3は名称のみ変更します。"
+u[i++]="  3. ファイル名を録音日時に調整します。"
+u[i++]="  4. AIFFに変換します.ビットレートとサンプリングdepthはそのままです[R1.5]"
+u[i++]="  5. Kikimimi形式：年月日_開始時間-終了時間_メーカ_元のファイル名.AIFF"
+u[i++]="  6. 出力ディレクトリをオプションで指定できます"
+#   u[i++]="  6. 出力先(dir_output=~/Desktop)"
+u[i++]="  8. 時差対応   -090000 （日本に比べ9時間遅い場合）"
+u[i++]="  9. ZOOM H6のマルチトラックに対応のため、元データ全部をバックアップ[R2.9]"
+#   u[i++]=" 10. iTunesのAIFFファイルはファイル名のみ変更する[R1.9]"
+u[i++]="  "
+
+[ $# -lt 1 ] && for mes in "${u[@]}" ; do echo " $mes"; done && exit
+
+#  libraryの読み込み
+libfile="${HOME}/daybreak-bin/libR1.3.bash"
+[ ! -f ${libfile} ] && echo "${prompt} ${libfile} がありません" 1>&2 && exit
+source ${libfile}
+
+# 引数の設定
+# ファイル存在の確認
+# プロンプト
+prompt="wav2aiff> "
+inputfile=${1} ;  
+[ -f ${inputfile} ] || abort "${prompt} 入力ファイル(${inputfile})がありません。" ; 
+[ $# -ge 2 ] && dir_output=${2} ||  dir_output="${HOME}/Desktop";	$debug "$#: dir_output=${dir_output}"
+[ $# -ge 3 ] && ifs=${3}        ||  ifs=""						;	$debug "$#: ifs=${ifs}"
+[ $# -ge 4 ] && timediff=${4}   ||  timediff="" 			;	$debug "$#: timediff=${timediff}"
+[ $# -ge 5 ] && dryrun=${5}     ||  dryrun="" 				;	$debug "$#: dryrun=${dryrun}" 
+
+
+# ##### 展開ディレクトリの確認 ###############################
+[ -e ${dir_output} ] || abort "${prompt} 展開先のフォルダ:${dir_output}がありません。"
+
+##### 初期値
+_date=$(date +%y%m%d);
+
+ICR2Kikimimi=ICR2Kikimimi.bash ; 
+$debug "ICR2Kikimimi=$ICR2Kikimimi"
+
+# ##### 出力ファイルの生成 ###################################
+echo "$prompt ${ICR2Kikimimi} ${inputfile} $ifs $timediff " 
+distfile=$( ${ICR2Kikimimi} ${inputfile} $ifs $timediff );  
+[ $? -ne 0 ] && abort "${prompt} 戻り値異常で終了 (${ICR2Kikimimi})";
+
+distfilebody=${distfile%.*} ;   
+
+# ファイル関係の設定
+dir_inputfile=$( dirname ${inputfile} );  $debug "dir_inputfile=$dir_inputfile"
+
+basename=${inputfile##*/}	;	$debug "basename=$basename"; #${変数##パターン}  # 先頭から最長一致した部分を取り除く
+filebody=${basename%.*}		;	$debug "filebody=$filebody" ; #${変数%パターン}   # 末尾から最短一致した部分を取り除く
+ext=${basename##*.} 			;	$debug "ext=$ext" ; # exit # 拡張子を取り出す
+
+[ ${dir_inputfile} = "." 		] && dirname="$(pwd)"; $debug  "dirname=$dirname"
+[ ! ${dir_inputfile} = "." 	] && dirname="$(pwd)/${dir_inputfile}"; $debug  "dirname=$dirname"
+fullpath="${dirname}/${basename}"; $debug  "fullpath=$fullpath"
+#fullpath="$(pwd)/${dir_inputfile}/${basename}"		; [ -z $dryrun ] || $debug  "fullpath=$fullpath"
+#dirname=$(dirname ${fullpath} )	; [ -z $dryrun ] || $debug "dirname=$dirname"
+
+filedate=$( gls -l --time-style=+%y%m%d ${inputfile} |awk '{print $6}' )  
+
+case ${ext} in 
+	"MP3" | "mp3" ) # MP3なら名前のみ変更
+		distfile=${distfilebody}.mp3
+		outputfile=${dir_output}/${distfile}
+		inxfile=${fullpath/.MP3/.INX};  $debug "inxfile=$inxfile"
+		[ -f ${outputfile} ] && abort "${prompt} ERROR: ${outputfile}が存在します。中止します。"
+		echo "$dryrun cp -a ${fullpath} ${outputfile}" 
+		$dryrun cp -a ${fullpath} ${outputfile} ; 
+	;;
+
+	"WAV" | "wav" ) # ファイルをAIFFに
+		distfile=${distfilebody}.aiff
+		outputfile=${dir_output}/${distfile}
+		inxfile=${fullpath/.WAV/.INX}; 
+		[ -f ${outputfile} ] && abort "${prompt} ERROR: ${outputfile}が存在します。中止します。"
+		echo "$dryrun sox -q ${fullpath} ${outputfile}"
+		$dryrun sox -q ${fullpath} ${outputfile}
+	;;
+
+	* )
+		abort "${prompt} $ext　は定義されていません"
+	;;
+esac
+
+####### 処理：バックアップ
+# logfileからメーカー名と機種情報を取り出しバックアップディレクトリを設定
+#maker=$(tail -n26  ${logfile} | awk -F'[:=]' '$2 ~ /maker/{printf "%s", $3}'); $debug "maker=$maker"
+#item=$( tail -n26  ${logfile} | awk -F'[:=]' '$2 ~ /item/{printf "%s", $3}') ; $debug "item=$item"
+maker=$( 	ICR2kikimimi.bash  $inputfile . +000000 - show_maker  | self 1 )
+item=$( 	ICR2kikimimi.bash  $inputfile . +000000 - show_maker  | self 2 )
+[ -z "${maker}" ] && abort "maker情報が空です"; # test -z は空の判定
+[ -z "${item}"  ] && abort "item情報が空です"
+
+$dir_backup="${HOME}/Desktop/OriginalSound/${_date}_${maker}_${item}"  
+[ ! -d ${dir_backup} ] && mkdir -p ${dir_backup} && echo "${dir_backup}を作りました" 
+
+# ZOOMの場合
+if [[ ${maker} = "ZOOM" ]] ; then # hprjファイルはコピーしておく。マルチトラックの音声ファイルに必要
+	zoomdir="${dir_backup}/$(basename ${dirname})";	$debug  "zoomdir=${zoomdir}"
+	hprjfile=$( ls ${dirname}/*.hprj )
+	hprjbasename=${hprjfile##*/}      
+	hprjfilename=${hprjbasename%.*}   
+	# バックアップフォルダを作成
+	[ ! -d ${zoomdir} ] && echo "${dryrun} mkdir -p ${zoomdir}"  && ${dryrun} mkdir ${zoomdir}; 
+	[ -e ${zoomdir}/${hprjbasename} ] && $abort "ファイル($hprjbasename)があります。中止"
+	echo "${dryrun} mv ${hprjfile} ${zoomdir}" 
+    ${dryrun} mv ${hprjfile} ${zoomdir} ;
+	dir_backup=${zoomdir}; 
+fi
+
+##### 処理：オリジナルの移動 ########################################
+[ -f ${dir_backup}/${basename} ] && abort "バックアップ先(${dir_backup})に同ファイルがあります。${fullpath}はバックアップされませんでした。"
+echo "${dryrun} mv ${fullpath} ${dir_backup}" #| tee -a ${logfile}
+${dryrun} mv ${fullpath} ${dir_backup};
+
+########## インデックスファイルの処理
+[ -f ${inxfile} ] && echo "$dryrun rm ${inxfile}" && ${dryrun} rm ${inxfile} 
+datfile="OLYML_TB.DAT" 
+[ -f ${datfile} ] && echo "$dryrun rm ${datfile}" && ${dryrun} rm ${datfile}
+
+dir_ICR=$(pwd | awk -F/ '{print "/"$2"/"$3}')
+echo -n "cd ~/Desktop; diskutil eject ${dir_ICR}"  | pbcopy
+
+exit 0;
