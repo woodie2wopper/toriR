@@ -6,14 +6,15 @@
 # 使い方の表示
 # ################################################################################
 u=(); i=0; j=0;
-u[i++]=" USAGE: ${CMD_SESSION} 030A_151204_1640.WAV [ifs|ifn] -090000 [show_org|-] show_maker" 
+u[i++]=" USAGE: ${CMD_SESSION} 030A_151204_1640.WAV [fm|-] [ifs|ifn] -090000 [show_org|-] show_maker" 
 u[i++]=""
 u[i++]=" 機能：1. 音源をファイルスタンプベースに666フォーマットのファイル名で返す"
 u[i++]="			 2. 拡張子は小文字にする"
 u[i++]="			 3. 機器情報などlogファイルを出力します。場所は\$HOME/log です。"
 u[i++]="			 4. ファイル名が同じフォーマットの場合、デバイス名をディレクトリ名から取得します。その場合、デバイス名はフルパスの2つ目のディレクトリと仮定しています"
 u[i++]="			 5. オプションは順番通りに設定してください。[a|b]はaかbかの意味です。"
-u[i++]=" OPT : [ifs|ifn]はファイルのタイムスタンプあるいかファイル名の時刻を無視する(Ignore File Stamp/Ignore File Name)"
+u[i++]=" OPT : [ifs|ifn]はファイルフォーマット。ifs/ifnはタイムスタンプあるいかファイル名の時刻を無視する(Ignore File Stamp/Ignore File Name)"
+u[i++]=" OPT : [fm|-] fmは森下フォーマット。出力は[モズ高鳴き_202109250740_東京都国分寺市_植田睦之.wav]で、拡張子は変えない"
 u[i++]=" OPT : [timediff] 時差 : %H%M%Sで入力してください"
 u[i++]=" OPT : [show_org] オリジナルファイルを表示します。"
 u[i++]=" OPT : [show_maker] メーカ情報を表示します"
@@ -55,10 +56,11 @@ inputfile=${1};
 [ -f ${inputfile} ] ||	abort "ファイル(${inputfile})がありません。" 
 
 # オプションの取得
-[ $# -ge 2 ] && ifs=${2}				||	ifs=""
-[ $# -ge 3 ] && timediff=${3}		||	timediff="+000000"
-[ $# -ge 4 ] && show_org=${4}		||	show_org=""
-[ $# -ge 5 ] && show_maker=${5}	||	show_maker=""
+[ $# -ge 3 ] && fmt=$2				||	fmt="-"
+[ $# -ge 3 ] && ifs=$3				||	ifs=""
+[ $# -ge 4 ] && timediff=$4		||	timediff="+000000"
+[ $# -ge 5 ] && show_org=$5		||	show_org=""
+[ $# -ge 6 ] && show_maker=$6	||	show_maker=""
 
 [[ $timediff =~ ^[+-][0-9]{6}$ ]]	|| abort "ERROR: timediff=${timediff}は+/-付きの6桁の数字で入力してください"
 sign_timediff="${timediff:0:1}"
@@ -354,12 +356,46 @@ _n_=$(	gdate -d @$epoch_start '+%H%M%S' )
 __n=$(	gdate -d @$epoch_stop	 '+%H%M%S' )
 
 # ################################################################################
+# 森下フォーマットの入力
+# ################################################################################
+if [ $fmt = "fm" ]; then
+	# 種名
+	declare -a bird
+	bird[1]="モズ高鳴き"
+	bird[2]="モズグゼリ"
+	bird[3]="ジョウビタキ地鳴き"
+	bird[4]="ツグミ地鳴き"
+	i=0;
+	for value in ${bird[@]}; do
+		i=$(echo $i + 1 |bc)
+		echo "$i: ${value}" 
+	done
+	echo -n "番号を入力してください:" 
+	read -p "番号を入力してください:" INPUT
+	birdname=${bird[$INPUT]}
+	#echo $birdname
+	# 観察場所の連想配列
+	declare -a Site
+	Site[1]="福井県越前市"
+	Site[2]="神奈川県大磯町"
+	echo "場所の入力："
+	i=0;
+	for value in ${Site[@]} ; do
+		i=$(echo $i + 1 |bc)
+		echo "${i}: ${value}" 
+	done
+	#echo -n "番号を入力してください:" 
+	read -p "番号を入力してください:" INPUT
+	place=${Site[$INPUT]}
+	outputfile="${birdname}_$(date -d @$epoch_start '+%Y%m%d%H%M%S')_${place}_大坂英樹".$ext
+fi
+# ################################################################################
 # 出力ファイルの生成 
 # ################################################################################
 ext=${ext,,}; # 小文字化 ${v,,}
 # 666形式のkikimimiなら何も出力しないが、その他は_を追加する
-[ $item = "Kikimimi" ] && separator"" || separator="_"
-outputfile="${n__}_${_n_}-${__n}_${item}${separator}${filebody}.$ext"
+[ $item = "Kikimimi" ] && separator="" || separator="_"
+[ ! $fmt = "fm" ]  && outputfile="${n__}_${_n_}-${__n}_${item}${separator}${filebody}.$ext"
 [[ "$show_org" 		= show_org 		]] && echo -n "$inputfile "
 [[ "$show_maker" 	= show_maker 	]] && echo -n "$maker" "$item "
 
